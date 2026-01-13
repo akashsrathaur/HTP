@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Virtual ID - Virtual Identity System</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="dashboard">
+            <div class="dashboard-header">
+                <h1>Generate Virtual ID</h1>
+                <a href="dashboard.html" class="btn btn-outline">Back to Dashboard</a>
+            </div>
+
+            <div id="message" class="hidden"></div>
+
+            <div id="generateSection">
+                <div class="alert alert-info">
+                    <strong>🔐 Privacy Protection</strong><br>
+                    Your Virtual ID will:
+                    <ul style="margin-top: 0.5rem; margin-left: 1.5rem;">
+                        <li>Expire after 1 hour</li>
+                        <li>Be valid for one-time use only</li>
+                        <li>Reveal only minimal information (name, age group, verification status)</li>
+                        <li>Be revocable at any time</li>
+                    </ul>
+                </div>
+
+                <button id="generateBtn" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                    Generate Virtual ID
+                </button>
+            </div>
+
+            <div id="vidDisplay" class="hidden">
+                <div class="vid-display">
+                    <h2>Your Virtual ID</h2>
+                    <div class="vid-number" id="vidNumber"></div>
+
+                    <button onclick="copyVID()" class="btn btn-secondary" style="margin: 0.5rem;">
+                        📋 Copy VID
+                    </button>
+
+                    <div class="qr-code" id="qrCode"></div>
+
+                    <div class="expiry-info">
+                        <div>Expires in: <strong id="countdown"></strong></div>
+                        <div style="margin-top: 0.5rem;">Usage: <strong id="usage">0/1</strong></div>
+                    </div>
+
+                    <div style="margin-top: 1.5rem;">
+                        <button onclick="revokeVID()" class="btn btn-danger">Revoke VID</button>
+                        <button onclick="location.reload()" class="btn btn-outline">Generate Another</button>
+                    </div>
+                </div>
+
+                <div class="alert alert-info" style="margin-top: 2rem;">
+                    <strong>How to share:</strong><br>
+                    1. Show the QR code for scanning, OR<br>
+                    2. Share the 12-digit VID number<br>
+                    3. The recipient can verify it at <a href="verify-vid.html"
+                        style="color: var(--primary);">verify-vid.html</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Check authentication
+        if (!isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+
+        const user = getCurrentUser();
+
+        // Check verification status
+        if (!user.aadhaar_verified || !user.pan_verified) {
+            document.getElementById('generateSection').innerHTML = `
+                <div class="alert alert-error">
+                    You must verify both Aadhaar and PAN before generating a Virtual ID.
+                    <div style="margin-top: 1rem;">
+                        <a href="verify-identity.html" class="btn btn-primary">Verify Identity</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        let currentVID = null;
+        let countdownInterval = null;
+
+        document.getElementById('generateBtn')?.addEventListener('click', async () => {
+            try {
+                const response = await apiRequest('/vid/generate', 'POST', null, true);
+
+                currentVID = response;
+
+                // Hide generate section, show VID
+                document.getElementById('generateSection').classList.add('hidden');
+                document.getElementById('vidDisplay').classList.remove('hidden');
+
+                // Display VID
+                document.getElementById('vidNumber').textContent = response.vid;
+
+                // Generate QR code
+                generateQRCode(response.qr_payload, 'qrCode');
+
+                // Start countdown
+                startCountdown(response.expires_at);
+
+                showMessage('Virtual ID generated successfully!', 'success');
+            } catch (error) {
+                showMessage(error.message, 'error');
+            }
+        });
+
+        function startCountdown(expiryString) {
+            updateCountdown(expiryString);
+
+            countdownInterval = setInterval(() => {
+                updateCountdown(expiryString);
+            }, 1000);
+        }
+
+        function updateCountdown(expiryString) {
+            const remaining = formatTimeRemaining(expiryString);
+            document.getElementById('countdown').textContent = remaining;
+
+            if (remaining === 'Expired') {
+                clearInterval(countdownInterval);
+                showMessage('VID has expired', 'error');
+            }
+        }
+
+        async function copyVID() {
+            if (currentVID) {
+                await copyToClipboard(currentVID.vid);
+                showMessage('VID copied to clipboard!', 'success');
+            }
+        }
+
+        async function revokeVID() {
+            if (!currentVID) return;
+
+            if (!confirm('Are you sure you want to revoke this VID? This cannot be undone.')) {
+                return;
+            }
+
+            try {
+                await apiRequest(`/vid/revoke/${currentVID.vid}`, 'POST', null, true);
+
+                clearInterval(countdownInterval);
+                showMessage('VID revoked successfully', 'success');
+
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+            } catch (error) {
+                showMessage(error.message, 'error');
+            }
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.className = `alert alert-${type}`;
+            messageDiv.textContent = message;
+            messageDiv.classList.remove('hidden');
+        }
+    </script>
+</body>
+
+</html>

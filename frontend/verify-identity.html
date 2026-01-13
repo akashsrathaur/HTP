@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Identity - Virtual Identity System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="form-container" style="max-width: 600px;">
+            <h1>Verify Your Identity</h1>
+            <p>Complete verification to generate Virtual IDs</p>
+
+            <div class="alert alert-info">
+                <strong>⚠️ SIMULATED VERIFICATION</strong><br>
+                This is for educational purposes only. Enter any valid format - verification is simulated.
+            </div>
+
+            <div id="message" class="hidden"></div>
+
+            <!-- Aadhaar Verification -->
+            <div class="form-group" id="aadhaarSection">
+                <h2 style="margin-bottom: 1rem;">Aadhaar Verification</h2>
+                <form id="aadhaarForm">
+                    <div class="form-group">
+                        <label for="aadhaar">Aadhaar Number</label>
+                        <input type="text" id="aadhaar" pattern="[0-9]{12}" maxlength="12" required>
+                        <small>12-digit number (simulated)</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="aadhaarOtp">OTP</label>
+                        <input type="text" id="aadhaarOtp" pattern="[0-9]{6}" maxlength="6" required>
+                        <small>Any 6-digit code (simulated)</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Verify Aadhaar</button>
+                </form>
+            </div>
+
+            <hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--border);">
+
+            <!-- PAN Verification -->
+            <div class="form-group" id="panSection">
+                <h2 style="margin-bottom: 1rem;">PAN Verification</h2>
+                <form id="panForm">
+                    <div class="form-group">
+                        <label for="pan">PAN Number</label>
+                        <input type="text" id="pan" pattern="[A-Z]{5}[0-9]{4}[A-Z]" maxlength="10" required
+                            style="text-transform: uppercase;">
+                        <small>Format: ABCDE1234F (simulated)</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Verify PAN</button>
+                </form>
+            </div>
+
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="dashboard.html" class="btn btn-outline">Back to Dashboard</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Check authentication
+        if (!isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+
+        const user = getCurrentUser();
+
+        // Hide sections if already verified
+        if (user.aadhaar_verified) {
+            document.getElementById('aadhaarSection').innerHTML = '<div class="alert alert-success">✅ Aadhaar already verified</div>';
+        }
+
+        if (user.pan_verified) {
+            document.getElementById('panSection').innerHTML = '<div class="alert alert-success">✅ PAN already verified</div>';
+        }
+
+        // Aadhaar verification
+        document.getElementById('aadhaarForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const aadhaar = document.getElementById('aadhaar').value;
+            const otp = document.getElementById('aadhaarOtp').value;
+
+            try {
+                const response = await apiRequest('/verify/aadhaar', 'POST', {
+                    aadhaar_number: aadhaar,
+                    otp: otp
+                }, true);
+
+                showMessage(response.message, 'success');
+
+                // Update user in localStorage
+                user.aadhaar_verified = true;
+                localStorage.setItem('user', JSON.stringify(user));
+
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            } catch (error) {
+                showMessage(error.message, 'error');
+            }
+        });
+
+        // PAN verification
+        document.getElementById('panForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const pan = document.getElementById('pan').value.toUpperCase();
+
+            try {
+                const response = await apiRequest('/verify/pan', 'POST', {
+                    pan_number: pan
+                }, true);
+
+                showMessage(response.message, 'success');
+
+                // Update user in localStorage
+                user.pan_verified = true;
+                localStorage.setItem('user', JSON.stringify(user));
+
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            } catch (error) {
+                showMessage(error.message, 'error');
+            }
+        });
+
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.className = `alert alert-${type}`;
+            messageDiv.textContent = message;
+            messageDiv.classList.remove('hidden');
+        }
+    </script>
+</body>
+
+</html>

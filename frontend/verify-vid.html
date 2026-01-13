@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Virtual ID - Virtual Identity System</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+
+<body>
+    <div class="container">
+        <div class="dashboard">
+            <h1 style="text-align: center; margin-bottom: 2rem;">Verify Virtual ID</h1>
+
+            <div class="alert alert-info">
+                <strong>🔍 Public Verification</strong><br>
+                Scan a QR code or enter a VID to verify someone's identity status.
+                This page is public and does not require login.
+            </div>
+
+            <div id="message" class="hidden"></div>
+
+            <!-- Tab Selection -->
+            <div style="display: flex; gap: 1rem; margin-bottom: 2rem; justify-content: center;">
+                <button id="scanTab" class="btn btn-primary" onclick="showTab('scan')">Scan QR Code</button>
+                <button id="manualTab" class="btn btn-outline" onclick="showTab('manual')">Enter VID Manually</button>
+            </div>
+
+            <!-- QR Scanner -->
+            <div id="scanSection">
+                <div id="qr-reader" style="max-width: 500px; margin: 0 auto;"></div>
+                <p style="text-align: center; color: var(--gray); margin-top: 1rem;">
+                    Position the QR code within the camera view
+                </p>
+            </div>
+
+            <!-- Manual Entry -->
+            <div id="manualSection" class="hidden">
+                <form id="verifyForm" style="max-width: 500px; margin: 0 auto;">
+                    <div class="form-group">
+                        <label for="vid">Virtual ID</label>
+                        <input type="text" id="vid" pattern="[0-9]{12}" maxlength="12" required
+                            placeholder="Enter 12-digit VID">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Verify VID</button>
+                </form>
+            </div>
+
+            <!-- Verification Result -->
+            <div id="result" class="hidden"></div>
+
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="index.html" class="btn btn-outline">Back to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        let html5QrCode = null;
+
+        function showTab(tab) {
+            if (tab === 'scan') {
+                document.getElementById('scanSection').classList.remove('hidden');
+                document.getElementById('manualSection').classList.add('hidden');
+                document.getElementById('scanTab').className = 'btn btn-primary';
+                document.getElementById('manualTab').className = 'btn btn-outline';
+                startScanner();
+            } else {
+                document.getElementById('scanSection').classList.add('hidden');
+                document.getElementById('manualSection').classList.remove('hidden');
+                document.getElementById('scanTab').className = 'btn btn-outline';
+                document.getElementById('manualTab').className = 'btn btn-primary';
+                stopScanner();
+            }
+        }
+
+        function startScanner() {
+            if (html5QrCode) {
+                html5QrCode.start(
+                    { facingMode: "environment" },
+                    { fps: 10, qrbox: 250 },
+                    onScanSuccess
+                ).catch(err => {
+                    console.error('Scanner error:', err);
+                    showMessage('Camera access denied or not available. Please use manual entry.', 'error');
+                });
+            } else {
+                html5QrCode = new Html5Qrcode("qr-reader");
+                startScanner();
+            }
+        }
+
+        function stopScanner() {
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop();
+            }
+        }
+
+        function onScanSuccess(decodedText) {
+            stopScanner();
+
+            try {
+                const qrPayload = JSON.parse(decodedText);
+                verifyVID(null, qrPayload);
+            } catch (error) {
+                showMessage('Invalid QR code format', 'error');
+            }
+        }
+
+        // Manual form submission
+        document.getElementById('verifyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const vid = document.getElementById('vid').value;
+            verifyVID(vid, null);
+        });
+
+        async function verifyVID(vid, qrPayload) {
+            try {
+                const requestBody = {};
+                if (vid) {
+                    requestBody.vid = vid;
+                }
+                if (qrPayload) {
+                    requestBody.qr_payload = qrPayload;
+                }
+
+                const response = await apiRequest('/verify-vid', 'POST', requestBody);
+
+                displayResult(response);
+            } catch (error) {
+                showMessage(error.message, 'error');
+            }
+        }
+
+        function displayResult(response) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.classList.remove('hidden');
+
+            if (response.valid) {
+                resultDiv.className = 'verification-result valid';
+                resultDiv.innerHTML = `
+                    <h2 style="color: var(--success); margin-bottom: 1rem;">✅ Valid Identity</h2>
+                    <p style="margin-bottom: 1.5rem;">${response.message}</p>
+                    
+                    <div class="user-info">
+                        <div class="info-item">
+                            <label>Name</label>
+                            <div class="value">${response.name}</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Age Group</label>
+                            <div class="value">${response.age_group}</div>
+                        </div>
+                        <div class="info-item">
+                            <label>Aadhaar Verified</label>
+                            <div class="value">${response.aadhaar_verified ? '✅ Yes' : '❌ No'}</div>
+                        </div>
+                        <div class="info-item">
+                            <label>PAN Verified</label>
+                            <div class="value">${response.pan_verified ? '✅ Yes' : '❌ No'}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-success" style="margin-top: 1.5rem;">
+                        This VID has been verified and is now marked as used. It cannot be used again.
+                    </div>
+                `;
+            } else {
+                resultDiv.className = 'verification-result invalid';
+                resultDiv.innerHTML = `
+                    <h2 style="color: var(--danger); margin-bottom: 1rem;">❌ Invalid VID</h2>
+                    <p>${response.message}</p>
+                    
+                    <div class="alert alert-error" style="margin-top: 1.5rem;">
+                        This VID could not be verified. It may be expired, revoked, already used, or invalid.
+                    </div>
+                `;
+            }
+
+            // Scroll to result
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.className = `alert alert-${type}`;
+            messageDiv.textContent = message;
+            messageDiv.classList.remove('hidden');
+        }
+
+        // Start scanner by default
+        startScanner();
+    </script>
+</body>
+
+</html>

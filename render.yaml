@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: vid-system-backend
+    env: python
+    region: oregon
+    plan: free
+    buildCommand: cd backend && pip install -r requirements.txt
+    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        value: sqlite+aiosqlite:///./vid_system.db
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: HMAC_SECRET_KEY
+        generateValue: true
+      - key: VID_EXPIRY_MINUTES
+        value: 60
+      - key: VID_USAGE_LIMIT
+        value: 1
+      - key: CORS_ORIGINS
+        value: "*"

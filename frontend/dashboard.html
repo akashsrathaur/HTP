@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Virtual Identity System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="dashboard">
+            <div class="dashboard-header">
+                <h1>Dashboard</h1>
+                <button onclick="logout()" class="btn btn-outline">Logout</button>
+            </div>
+
+            <div id="userInfo"></div>
+
+            <div class="status-badges" id="statusBadges"></div>
+
+            <div id="actions" class="cta-buttons" style="justify-content: flex-start; margin-bottom: 2rem;"></div>
+
+            <div id="vidList"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Check authentication
+        if (!isAuthenticated()) {
+            window.location.href = 'login.html';
+        }
+
+        const user = getCurrentUser();
+
+        // Display user info
+        document.getElementById('userInfo').innerHTML = `
+            <h2>Welcome, ${user.name}!</h2>
+            <p style="color: var(--gray);">${user.email}</p>
+        `;
+
+        // Display verification status
+        const statusHTML = `
+            <div class="badge ${user.aadhaar_verified ? 'badge-success' : 'badge-warning'}">
+                ${user.aadhaar_verified ? '✅' : '⚠️'} Aadhaar: ${user.aadhaar_verified ? 'Verified' : 'Not Verified'}
+            </div>
+            <div class="badge ${user.pan_verified ? 'badge-success' : 'badge-warning'}">
+                ${user.pan_verified ? '✅' : '⚠️'} PAN: ${user.pan_verified ? 'Verified' : 'Not Verified'}
+            </div>
+        `;
+        document.getElementById('statusBadges').innerHTML = statusHTML;
+
+        // Display actions
+        let actionsHTML = '';
+
+        if (!user.aadhaar_verified || !user.pan_verified) {
+            actionsHTML += '<a href="verify-identity.html" class="btn btn-primary">Verify Identity</a>';
+        }
+
+        if (user.aadhaar_verified && user.pan_verified) {
+            actionsHTML += '<a href="generate-vid.html" class="btn btn-primary">Generate Virtual ID</a>';
+        }
+
+        document.getElementById('actions').innerHTML = actionsHTML;
+
+        // Load VIDs
+        loadVIDs();
+
+        async function loadVIDs() {
+            try {
+                const response = await apiRequest('/vid/list', 'GET', null, true);
+
+                if (response.total === 0) {
+                    document.getElementById('vidList').innerHTML = `
+                        <div class="alert alert-info">
+                            You haven't generated any Virtual IDs yet.
+                            ${user.aadhaar_verified && user.pan_verified ? 'Click "Generate Virtual ID" to create one.' : 'Verify your identity first to generate VIDs.'}
+                        </div>
+                    `;
+                    return;
+                }
+
+                let vidsHTML = '<h2 style="margin-bottom: 1rem;">Your Virtual IDs</h2>';
+
+                response.vids.forEach(vid => {
+                    const statusClass = vid.is_valid ? 'badge-success' : 'badge-danger';
+                    const statusText = vid.revoked ? 'Revoked' :
+                        (new Date(vid.expires_at) < new Date() ? 'Expired' :
+                            (vid.usage_count >= vid.usage_limit ? 'Used' : 'Active'));
+
+                    vidsHTML += `
+                        <div class="vid-item">
+                            <div class="vid-item-info">
+                                <h3>${vid.vid}</h3>
+                                <div class="vid-item-meta">
+                                    Created: ${formatDateTime(vid.created_at)} | 
+                                    Expires: ${formatDateTime(vid.expires_at)} | 
+                                    Used: ${vid.usage_count}/${vid.usage_limit}
+                                </div>
+                            </div>
+                            <div class="badge ${statusClass}">${statusText}</div>
+                        </div>
+                    `;
+                });
+
+                document.getElementById('vidList').innerHTML = vidsHTML;
+            } catch (error) {
+                document.getElementById('vidList').innerHTML = `
+                    <div class="alert alert-error">Failed to load VIDs: ${error.message}</div>
+                `;
+            }
+        }
+    </script>
+</body>
+
+</html>
