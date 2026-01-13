@@ -57,10 +57,14 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# CORS middleware - Allow all origins for local development
+# CORS middleware - Allow frontend domains
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for development
+    allow_origins=[
+        "https://htp-vid-system.netlify.app",  # Production frontend
+        "http://localhost:3000",                # Local development
+        "http://10.12.86.113:3000",            # Network access
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
