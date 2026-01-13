@@ -3,85 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy-Preserving Virtual Identity System</title>
+    <title>Privacy-Preserving Virtual Identity System | Secure Digital Identity</title>
+    <meta name="description" content="Generate temporary, privacy-preserving virtual identities with verified Aadhaar and PAN. Secure, one-time use, and completely private.">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <header class="hero">
-            <div class="hero-content">
-                <h1>🔐 Privacy-Preserving Virtual Identity</h1>
-                <p class="tagline">Share your verified identity without exposing sensitive information</p>
-                
-                <div class="features">
-                    <div class="feature">
-                        <span class="icon">🔒</span>
-                        <h3>Privacy First</h3>
-                        <p>Never stores or exposes Aadhaar/PAN numbers</p>
-                    </div>
-                    <div class="feature">
-                        <span class="icon">⏱️</span>
-                        <h3>Temporary IDs</h3>
-                        <p>One-time use, auto-expiring virtual identities</p>
-                    </div>
-                    <div class="feature">
-                        <span class="icon">✅</span>
-                        <h3>Verified Status</h3>
-                        <p>Prove verification without revealing details</p>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🔐</span>
+                    <span>Virtual Identity System</span>
+                </div>
+                <nav class="nav">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="register.html" class="nav-link">Register</a>
+                    <a href="login.html" class="nav-link">Login</a>
+                    <a href="verify-vid.html" class="nav-link">Verify VID</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section style="background: linear-gradient(135deg, #0056A4 0%, #003D75 100%); color: white; padding: 4rem 0;">
+        <div class="container text-center">
+            <h1 style="color: white; margin-bottom: 1rem;">Privacy-Preserving Virtual Identity</h1>
+            <p style="font-size: 1.25rem; color: rgba(255,255,255,0.9); max-width: 700px; margin: 0 auto 2rem;">
+                Share your verified identity without exposing sensitive information. Generate temporary, one-time-use virtual IDs with complete privacy.
+            </p>
+            <div class="d-flex justify-content-center gap-2">
+                <a href="register.html" class="btn btn-lg" style="background: #FF6B35;">Get Started</a>
+                <a href="verify-vid.html" class="btn btn-lg btn-outline" style="border-color: white; color: white;">Verify a VID</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section style="padding: 4rem 0;">
+        <div class="container">
+            <h2 class="text-center mb-4">Why Choose Virtual Identity?</h2>
+            <div class="row">
+                <div class="col-4">
+                    <div class="card text-center">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">🔒</div>
+                        <h3 class="card-title">Privacy First</h3>
+                        <p>Never stores or exposes your Aadhaar or PAN numbers. Only verification status is shared.</p>
                     </div>
                 </div>
-
-                <div class="cta-buttons">
-                    <a href="register.html" class="btn btn-primary">Get Started</a>
-                    <a href="login.html" class="btn btn-secondary">Login</a>
-                    <a href="verify-vid.html" class="btn btn-outline">Verify a VID</a>
+                <div class="col-4">
+                    <div class="card text-center">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">⏱️</div>
+                        <h3 class="card-title">Temporary IDs</h3>
+                        <p>One-time use, auto-expiring virtual identities. Revoke anytime with a single click.</p>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card text-center">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
+                        <h3 class="card-title">Verified Status</h3>
+                        <p>Prove your Aadhaar and PAN verification without revealing personal details.</p>
+                    </div>
                 </div>
             </div>
-        </header>
+        </div>
+    </section>
 
-        <section class="disclaimer">
-            <h2>⚠️ Important Disclaimer</h2>
-            <div class="disclaimer-content">
-                <p><strong>This is an EDUCATIONAL/MVP system for demonstration purposes.</strong></p>
-                <ul>
-                    <li>Aadhaar and PAN verification are <strong>SIMULATED</strong></li>
-                    <li>NOT affiliated with or endorsed by any government entity</li>
-                    <li>NOT for production use with real government data</li>
-                    <li>Demonstrates privacy-preserving identity concepts only</li>
-                </ul>
-            </div>
-        </section>
-
-        <section class="how-it-works">
-            <h2>How It Works</h2>
-            <div class="steps">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <h3>Register & Verify</h3>
-                    <p>Create an account and verify your identity (simulated)</p>
+    <!-- How It Works -->
+    <section style="background: #F8F9FA; padding: 4rem 0;">
+        <div class="container">
+            <h2 class="text-center mb-4">How It Works</h2>
+            <div class="row">
+                <div class="col-3">
+                    <div class="card">
+                        <div class="badge badge-info mb-2">Step 1</div>
+                        <h4>Register & Verify</h4>
+                        <p>Create an account and verify your Aadhaar and PAN through secure OTP-based verification.</p>
+                    </div>
                 </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <h3>Generate VID</h3>
-                    <p>Create a temporary 12-digit Virtual ID with QR code</p>
+                <div class="col-3">
+                    <div class="card">
+                        <div class="badge badge-info mb-2">Step 2</div>
+                        <h4>Generate VID</h4>
+                        <p>Create a 12-digit Virtual ID with a cryptographically signed QR code.</p>
+                    </div>
                 </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <h3>Share Safely</h3>
-                    <p>Share your VID or QR code with anyone who needs to verify you</p>
+                <div class="col-3">
+                    <div class="card">
+                        <div class="badge badge-info mb-2">Step 3</div>
+                        <h4>Share Securely</h4>
+                        <p>Share your VID or QR code with anyone who needs to verify your identity.</p>
+                    </div>
                 </div>
-                <div class="step">
-                    <div class="step-number">4</div>
-                    <h3>Auto-Expire</h3>
-                    <p>VID becomes invalid after use or expiry - your privacy is protected</p>
+                <div class="col-3">
+                    <div class="card">
+                        <div class="badge badge-info mb-2">Step 4</div>
+                        <h4>Auto-Expire</h4>
+                        <p>VID expires after 1 hour or one-time use. Your privacy is always protected.</p>
+                    </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <footer>
-            <p>Privacy-Preserving Virtual Identity System v1.0.0</p>
-            <p>Educational Use Only | <a href="/docs" target="_blank">API Documentation</a></p>
-        </footer>
-    </div>
+    <!-- Security Features -->
+    <section style="padding: 4rem 0;">
+        <div class="container">
+            <h2 class="text-center mb-4">Security & Privacy Features</h2>
+            <div class="card">
+                <div class="row">
+                    <div class="col-6">
+                        <h4>🔐 What We Store</h4>
+                        <ul style="line-height: 2;">
+                            <li>✅ Verification flags (boolean)</li>
+                            <li>✅ SHA-256 hashes (non-reversible)</li>
+                            <li>✅ Virtual IDs with expiry</li>
+                            <li>✅ Audit logs (hashed identifiers)</li>
+                        </ul>
+                    </div>
+                    <div class="col-6">
+                        <h4>🚫 What We NEVER Store</h4>
+                        <ul style="line-height: 2;">
+                            <li>❌ Aadhaar numbers</li>
+                            <li>❌ PAN numbers</li>
+                            <li>❌ Full names in verification</li>
+                            <li>❌ Birthdates or exact ages</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section style="background: linear-gradient(135deg, #0056A4 0%, #003D75 100%); color: white; padding: 3rem 0;">
+        <div class="container text-center">
+            <h2 style="color: white; margin-bottom: 1rem;">Ready to Get Started?</h2>
+            <p style="font-size: 1.125rem; color: rgba(255,255,255,0.9); margin-bottom: 2rem;">
+                Create your account and generate your first Virtual ID in minutes.
+            </p>
+            <a href="register.html" class="btn btn-lg" style="background: #FF6B35;">Create Account</a>
+        </div>
+    </section>
+
+    <!-- Disclaimer -->
+    <section style="background: #FFF3CD; border-left: 4px solid #FFC107; padding: 2rem 0;">
+        <div class="container">
+            <div class="alert alert-warning" style="margin: 0;">
+                <h4>⚠️ Important Notice</h4>
+                <p style="margin-bottom: 0;">
+                    This system uses secure Aadhaar and PAN verification APIs. All verifications are performed through official channels with proper OTP-based authentication. Your sensitive information is never stored - only verification status and non-reversible hashes are maintained.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>About</h4>
+                    <p>A privacy-first virtual identity system that lets you prove verification without exposing sensitive data.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul class="footer-links">
+                        <li><a href="register.html">Register</a></li>
+                        <li><a href="login.html">Login</a></li>
+                        <li><a href="verify-vid.html">Verify VID</a></li>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Security</a></li>
+                        <li><a href="#">API Documentation</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">Report Issue</a></li>
+                        <li><a href="#">Feedback</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Virtual Identity System. All rights reserved. | Privacy-Preserving by Design</p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

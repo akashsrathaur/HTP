@@ -4,27 +4,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Virtual Identity System</title>
+    <title>Dashboard | Virtual Identity System</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <div class="container">
-        <div class="dashboard">
-            <div class="dashboard-header">
-                <h1>Dashboard</h1>
-                <button onclick="logout()" class="btn btn-outline">Logout</button>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🔐</span>
+                    <span>Virtual Identity System</span>
+                </div>
+                <nav class="nav">
+                    <a href="dashboard.html" class="nav-link">Dashboard</a>
+                    <a href="verify-identity.html" class="nav-link">Verify Identity</a>
+                    <a href="generate-vid.html" class="nav-link">Generate VID</a>
+                    <a href="scan.html" class="nav-link">Scan QR</a>
+                    <a href="#" class="nav-link" onclick="logout()">Logout</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main style="padding: 2rem 0; min-height: calc(100vh - 200px);">
+        <div class="container">
+            <!-- Welcome Section -->
+            <div class="card"
+                style="background: linear-gradient(135deg, #0056A4 0%, #003D75 100%); color: white; border: none;">
+                <h2 style="color: white; margin-bottom: 0.5rem;">Welcome back, <span id="userName">User</span>!</h2>
+                <p style="color: rgba(255,255,255,0.9); margin: 0;">Manage your virtual identities and verification
+                    status</p>
             </div>
 
-            <div id="userInfo"></div>
+            <!-- Profile & Stats Row -->
+            <div class="row">
+                <!-- Profile Card -->
+                <div class="col-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Your Profile</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="text-align: center; margin-bottom: 1.5rem;">
+                                <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #0056A4, #003D75); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; color: white; font-size: 2rem; font-weight: bold;"
+                                    id="userAvatar">
+                                    A
+                                </div>
+                                <h4 id="profileName" style="margin-bottom: 0.25rem;">Loading...</h4>
+                                <p id="profileEmail" class="text-secondary" style="margin: 0; font-size: 0.875rem;">
+                                    Loading...</p>
+                            </div>
 
-            <div class="status-badges" id="statusBadges"></div>
+                            <div style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                                <h5 style="margin-bottom: 1rem;">Verification Status</h5>
+                                <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span>Aadhaar</span>
+                                        <span id="aadhaarBadge" class="badge badge-warning">Not Verified</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span>PAN</span>
+                                        <span id="panBadge" class="badge badge-warning">Not Verified</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <a href="verify-identity.html" class="btn btn-primary" style="width: 100%;" id="verifyBtn">
+                                Verify Identity
+                            </a>
+                        </div>
+                    </div>
+                </div>
 
-            <div id="actions" class="cta-buttons" style="justify-content: flex-start; margin-bottom: 2rem;"></div>
+                <!-- Statistics -->
+                <div class="col-8">
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="card text-center">
+                                <div style="font-size: 2.5rem; color: var(--aadhaar-blue); margin-bottom: 0.5rem;"
+                                    id="totalVids">0</div>
+                                <h5 style="margin: 0; color: var(--text-secondary);">Total VIDs</h5>
+                                <p style="font-size: 0.875rem; color: var(--text-muted); margin: 0.25rem 0 0;">Generated
+                                </p>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="card text-center">
+                                <div style="font-size: 2.5rem; color: var(--success-green); margin-bottom: 0.5rem;"
+                                    id="activeVids">0</div>
+                                <h5 style="margin: 0; color: var(--text-secondary);">Active VIDs</h5>
+                                <p style="font-size: 0.875rem; color: var(--text-muted); margin: 0.25rem 0 0;">Currently
+                                    Valid</p>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="card text-center">
+                                <div style="font-size: 2.5rem; color: var(--aadhaar-orange); margin-bottom: 0.5rem;"
+                                    id="verifications">0</div>
+                                <h5 style="margin: 0; color: var(--text-secondary);">Verifications</h5>
+                                <p style="font-size: 0.875rem; color: var(--text-muted); margin: 0.25rem 0 0;">Received
+                                </p>
+                            </div>
+                        </div>
+                    </div>
 
-            <div id="vidList"></div>
+                    <!-- Quick Actions -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Quick Actions</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <a href="generate-vid.html" class="btn btn-primary" style="width: 100%;"
+                                        id="generateVidBtn">
+                                        🆔 Generate New VID
+                                    </a>
+                                </div>
+                                <div class="col-6">
+                                    <a href="scan.html" class="btn btn-outline" style="width: 100%;">
+                                        📷 Scan QR Code
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VID Management Section -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3 class="card-title" style="margin: 0;">Your Virtual IDs</h3>
+                        <a href="generate-vid.html" class="btn btn-sm btn-primary" id="generateVidBtn2">
+                            + New VID
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="vidsContainer">
+                        <!-- VIDs will be loaded here -->
+                        <div class="text-center" style="padding: 3rem 0;">
+                            <div class="spinner" style="margin: 0 auto 1rem;"></div>
+                            <p class="text-secondary">Loading your Virtual IDs...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2026 Virtual Identity System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 
     <script src="app.js"></script>
     <script>
@@ -33,85 +175,171 @@
             window.location.href = 'login.html';
         }
 
-        const user = getCurrentUser();
+        // Load user data
+        async function loadDashboard() {
+            try {
+                const user = await getCurrentUser();
 
-        // Display user info
-        document.getElementById('userInfo').innerHTML = `
-            <h2>Welcome, ${user.name}!</h2>
-            <p style="color: var(--gray);">${user.email}</p>
-        `;
+                // Update profile
+                document.getElementById('userName').textContent = user.name.split(' ')[0];
+                document.getElementById('profileName').textContent = user.name;
+                document.getElementById('profileEmail').textContent = user.email;
+                document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
 
-        // Display verification status
-        const statusHTML = `
-            <div class="badge ${user.aadhaar_verified ? 'badge-success' : 'badge-warning'}">
-                ${user.aadhaar_verified ? '✅' : '⚠️'} Aadhaar: ${user.aadhaar_verified ? 'Verified' : 'Not Verified'}
-            </div>
-            <div class="badge ${user.pan_verified ? 'badge-success' : 'badge-warning'}">
-                ${user.pan_verified ? '✅' : '⚠️'} PAN: ${user.pan_verified ? 'Verified' : 'Not Verified'}
-            </div>
-        `;
-        document.getElementById('statusBadges').innerHTML = statusHTML;
+                // Update verification badges
+                if (user.aadhaar_verified) {
+                    document.getElementById('aadhaarBadge').className = 'badge badge-success';
+                    document.getElementById('aadhaarBadge').innerHTML = '✓ Verified';
+                }
 
-        // Display actions
-        let actionsHTML = '';
+                if (user.pan_verified) {
+                    document.getElementById('panBadge').className = 'badge badge-success';
+                    document.getElementById('panBadge').innerHTML = '✓ Verified';
+                }
 
-        if (!user.aadhaar_verified || !user.pan_verified) {
-            actionsHTML += '<a href="verify-identity.html" class="btn btn-primary">Verify Identity</a>';
+                // Update verify button
+                if (user.aadhaar_verified && user.pan_verified) {
+                    document.getElementById('verifyBtn').textContent = '✓ Fully Verified';
+                    document.getElementById('verifyBtn').classList.add('btn-success');
+                    document.getElementById('verifyBtn').classList.remove('btn-primary');
+                    document.getElementById('generateVidBtn').disabled = false;
+                    document.getElementById('generateVidBtn2').disabled = false;
+                } else {
+                    document.getElementById('generateVidBtn').disabled = true;
+                    document.getElementById('generateVidBtn2').disabled = true;
+                    document.getElementById('generateVidBtn').style.opacity = '0.6';
+                    document.getElementById('generateVidBtn2').style.opacity = '0.6';
+                }
+
+                // Load VIDs
+                await loadVIDs();
+
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                showAlert('Failed to load dashboard data', 'error');
+            }
         }
-
-        if (user.aadhaar_verified && user.pan_verified) {
-            actionsHTML += '<a href="generate-vid.html" class="btn btn-primary">Generate Virtual ID</a>';
-        }
-
-        document.getElementById('actions').innerHTML = actionsHTML;
-
-        // Load VIDs
-        loadVIDs();
 
         async function loadVIDs() {
             try {
-                const response = await apiRequest('/vid/list', 'GET', null, true);
+                const response = await apiRequest('/vid/list');
+                const vids = response.vids || [];
 
-                if (response.total === 0) {
-                    document.getElementById('vidList').innerHTML = `
-                        <div class="alert alert-info">
-                            You haven't generated any Virtual IDs yet.
-                            ${user.aadhaar_verified && user.pan_verified ? 'Click "Generate Virtual ID" to create one.' : 'Verify your identity first to generate VIDs.'}
+                // Update statistics
+                document.getElementById('totalVids').textContent = vids.length;
+                const activeCount = vids.filter(v => !v.revoked && new Date(v.expires_at) > new Date() && v.usage_count < v.usage_limit).length;
+                document.getElementById('activeVids').textContent = activeCount;
+
+                // Calculate total verifications (usage count)
+                const totalVerifications = vids.reduce((sum, v) => sum + v.usage_count, 0);
+                document.getElementById('verifications').textContent = totalVerifications;
+
+                // Display VIDs
+                const container = document.getElementById('vidsContainer');
+
+                if (vids.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center" style="padding: 3rem 0;">
+                            <div style="font-size: 4rem; margin-bottom: 1rem;">📭</div>
+                            <h4>No Virtual IDs Yet</h4>
+                            <p class="text-secondary">Generate your first VID to get started</p>
+                            <a href="generate-vid.html" class="btn btn-primary mt-2">Generate VID</a>
                         </div>
                     `;
                     return;
                 }
 
-                let vidsHTML = '<h2 style="margin-bottom: 1rem;">Your Virtual IDs</h2>';
+                container.innerHTML = '<div class="row">' + vids.map(vid => {
+                    const isExpired = new Date(vid.expires_at) < new Date();
+                    const isUsed = vid.usage_count >= vid.usage_limit;
+                    const isActive = !vid.revoked && !isExpired && !isUsed;
 
-                response.vids.forEach(vid => {
-                    const statusClass = vid.is_valid ? 'badge-success' : 'badge-danger';
-                    const statusText = vid.revoked ? 'Revoked' :
-                        (new Date(vid.expires_at) < new Date() ? 'Expired' :
-                            (vid.usage_count >= vid.usage_limit ? 'Used' : 'Active'));
+                    let statusBadge = '';
+                    if (vid.revoked) {
+                        statusBadge = '<span class="badge badge-danger">Revoked</span>';
+                    } else if (isExpired) {
+                        statusBadge = '<span class="badge badge-warning">Expired</span>';
+                    } else if (isUsed) {
+                        statusBadge = '<span class="badge badge-warning">Used</span>';
+                    } else {
+                        statusBadge = '<span class="badge badge-success">Active</span>';
+                    }
 
-                    vidsHTML += `
-                        <div class="vid-item">
-                            <div class="vid-item-info">
-                                <h3>${vid.vid}</h3>
-                                <div class="vid-item-meta">
-                                    Created: ${formatDateTime(vid.created_at)} | 
-                                    Expires: ${formatDateTime(vid.expires_at)} | 
-                                    Used: ${vid.usage_count}/${vid.usage_limit}
+                    return `
+                        <div class="col-6">
+                            <div class="card">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <div>
+                                        <h4 style="font-family: monospace; color: var(--aadhaar-blue); margin-bottom: 0.25rem;">${vid.vid}</h4>
+                                        <p style="font-size: 0.75rem; color: var(--text-muted); margin: 0;">
+                                            Created ${new Date(vid.created_at).toLocaleDateString()}
+                                        </p>
+                                    </div>
+                                    ${statusBadge}
                                 </div>
+                                <div style="font-size: 0.875rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span>Expires:</span>
+                                        <strong>${new Date(vid.expires_at).toLocaleString()}</strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Usage:</span>
+                                        <strong>${vid.usage_count} / ${vid.usage_limit}</strong>
+                                    </div>
+                                </div>
+                                ${isActive ? `
+                                    <div class="d-flex gap-1">
+                                        <a href="generate-vid.html?vid=${vid.vid}" class="btn btn-sm btn-outline" style="flex: 1;">View QR</a>
+                                        <button onclick="revokeVID('${vid.vid}')" class="btn btn-sm btn-danger" style="flex: 1;">Revoke</button>
+                                    </div>
+                                ` : ''}
                             </div>
-                            <div class="badge ${statusClass}">${statusText}</div>
                         </div>
                     `;
-                });
+                }).join('') + '</div>';
 
-                document.getElementById('vidList').innerHTML = vidsHTML;
             } catch (error) {
-                document.getElementById('vidList').innerHTML = `
-                    <div class="alert alert-error">Failed to load VIDs: ${error.message}</div>
+                console.error('Error loading VIDs:', error);
+                document.getElementById('vidsContainer').innerHTML = `
+                    <div class="alert alert-error">
+                        Failed to load Virtual IDs. Please try again.
+                    </div>
                 `;
             }
         }
+
+        async function revokeVID(vid) {
+            if (!confirm('Are you sure you want to revoke this VID? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                await apiRequest(`/vid/revoke/${vid}`, 'POST');
+                showAlert('VID revoked successfully', 'success');
+                await loadVIDs();
+            } catch (error) {
+                showAlert('Failed to revoke VID', 'error');
+            }
+        }
+
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} fade-in`;
+            alertDiv.textContent = message;
+            alertDiv.style.position = 'fixed';
+            alertDiv.style.top = '20px';
+            alertDiv.style.right = '20px';
+            alertDiv.style.zIndex = '9999';
+            alertDiv.style.minWidth = '300px';
+            document.body.appendChild(alertDiv);
+
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 3000);
+        }
+
+        // Load dashboard on page load
+        loadDashboard();
     </script>
 </body>
 

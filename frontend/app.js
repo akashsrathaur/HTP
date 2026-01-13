@@ -3,7 +3,7 @@
  * Privacy-Preserving Virtual Identity System
  */
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = 'http://10.12.86.113:8000';
 
 /**
  * Make an API request

@@ -11,7 +11,7 @@ import secrets
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
     
-    # Database
+    # Database - SQLite for local development (portable across devices)
     database_url: str = Field(
         default="sqlite+aiosqlite:///./vid_system.db",
         description="Database connection URL"
