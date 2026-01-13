@@ -3,7 +3,7 @@
  * Privacy-Preserving Virtual Identity System
  */
 
-const API_BASE_URL = 'https://htp-comi.onrender.com';
+const API_BASE_URL = 'https://htp-cemi.onrender.com';
 /**
  * Make an API request
  */
