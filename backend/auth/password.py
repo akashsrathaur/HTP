@@ -1,17 +1,8 @@
 """
-Password hashing and verification using bcrypt.
+Password hashing and verification using bcrypt directly.
 """
 
-from passlib.context import CryptContext
-from config import settings
-
-
-# Create bcrypt context
-pwd_context = CryptContext(
-    schemes=["bcrypt"],
-    deprecated="auto",
-    bcrypt__rounds=settings.bcrypt_rounds
-)
+import bcrypt
 
 
 def hash_password(password: str) -> str:
@@ -22,9 +13,17 @@ def hash_password(password: str) -> str:
         password: Plaintext password
         
     Returns:
-        Hashed password
+        Hashed password as string
     """
-    return pwd_context.hash(password)
+    # Convert password to bytes
+    password_bytes = password.encode('utf-8')
+    
+    # Generate salt and hash
+    salt = bcrypt.gensalt(rounds=12)
+    hashed = bcrypt.hashpw(password_bytes, salt)
+    
+    # Return as string
+    return hashed.decode('utf-8')
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -38,4 +37,9 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     Returns:
         True if password matches, False otherwise
     """
-    return pwd_context.verify(plain_password, hashed_password)
+    # Convert to bytes
+    password_bytes = plain_password.encode('utf-8')
+    hashed_bytes = hashed_password.encode('utf-8')
+    
+    # Verify
+    return bcrypt.checkpw(password_bytes, hashed_bytes)
